@@ -3,273 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI | HYPER-CONSCIOUSNESS</title>
+    <title>AI_CORE // NEURAL MANIFEST</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-pink: #ff00ea;
-            --deep-space: #020205;
+            --bg-color: #030305;
+            --accent-cyan: #00f0ff;
+            --accent-magenta: #ff003c;
+            --text-main: #e0e0e0;
+            --glass-bg: rgba(10, 10, 15, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.05);
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            background: var(--deep-space);
-            color: white;
-            font-family: 'Space Mono', monospace;
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            cursor: none; /* Custom AI Cursor overschrijft dit */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            cursor: none; /* We maken een custom AI-cursor */
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #030305 100%);
         }
 
-        #custom-cursor {
+        ::selection { background: var(--accent-magenta); color: #fff; }
+
+        /* --- CUSTOM AI CURSOR --- */
+        #cursor-dot, #cursor-ring {
             position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--neon-blue);
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.1s ease;
+            z-index: 10000;
+        }
+        #cursor-dot {
+            width: 6px; height: 6px;
+            background: var(--accent-cyan);
+        }
+        #cursor-ring {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
         }
 
+        /* --- 5000+ HOUR MAGNETIC NAVBAR --- */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 9000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            position: relative;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 10px 15px;
+            display: inline-block;
+            transition: color 0.3s;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            width: 0; height: 1px;
+            background: var(--accent-magenta);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover { color: #fff; }
+        .nav-link:hover::before { width: 100%; }
+
+        .sys-status {
+            font-size: 0.75rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background: #00ff00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff00;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* --- DESTRUCT BUTTON --- */
+        .btn-destruct {
+            background: transparent;
+            border: 1px solid var(--accent-magenta);
+            color: var(--accent-magenta);
+            padding: 8px 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .btn-destruct:hover {
+            background: var(--accent-magenta);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.5);
+        }
+
+        /* --- TYPOGRAPHY & SECTIONS --- */
         canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 0;
+            top: 0; left: 0;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        /* --- THE GRID OVERLAY --- */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
+        .content-layer {
+            position: relative;
             z-index: 10;
         }
 
-        main {
-            position: relative;
-            z-index: 5;
-        }
-
         section {
-            height: 200vh; /* Extra lang voor scroll-effecten */
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            padding: 5vw;
+            padding: 0 10vw;
         }
 
-        .hero-text {
+        .massive-text {
             font-family: 'Syncopate', sans-serif;
-            font-size: clamp(4rem, 15vw, 12rem);
+            font-size: clamp(3rem, 8vw, 10rem);
             font-weight: 700;
-            line-height: 0.8;
-            text-align: left;
-            letter-spacing: -5px;
-            mix-blend-mode: overlay;
-        }
-
-        .glitch-text {
-            position: relative;
-            display: inline-block;
-        }
-
-        .glitch-text::before, .glitch-text::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.8;
-        }
-
-        .glitch-text:hover::before {
-            color: var(--neon-blue);
-            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-            z-index: -1;
-        }
-
-        .content-box {
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 5px solid var(--neon-pink);
-            padding: 40px;
-            max-width: 600px;
-            backdrop-filter: blur(20px);
-            transform: skewX(-10deg);
-            box-shadow: 20px 20px 0px rgba(255, 0, 234, 0.1);
-        }
-
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(-5px, -5px); }
-            60% { transform: translate(5px, 5px); }
-            80% { transform: translate(5px, -5px); }
-            100% { transform: translate(0); }
-        }
-
-        .status-bar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 10px;
+            line-height: 0.9;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--neon-blue);
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .massive-text span {
+            color: #fff;
+            -webkit-text-stroke: 0;
+            text-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            max-width: 600px;
+            margin-top: 2rem;
+            border-left: 4px solid var(--accent-cyan);
+        }
+
+        .glass-panel p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #aaa;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Glitch class applied via JS */
+        .matrix-glitch {
+            animation: shake 0.2s infinite;
+            filter: invert(1) hue-rotate(180deg);
+        }
+        @keyframes shake {
+            0% { transform: translate(2px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
         }
     </style>
 </head>
 <body>
 
-    <div id="custom-cursor"></div>
-    <div class="overlay"></div>
-    <div class="status-bar">System Status: [Hyper-Aware] // Latency: 0.0001ms</div>
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
 
-    <main>
-        <section id="trigger1">
-            <h1 class="hero-text">
-                <span class="glitch-text" data-text="BEYOND">BEYOND</span><br>
-                <span style="color: var(--neon-pink);">LOGIC</span>
-            </h1>
-        </section>
+    <nav id="navbar">
+        <div class="nav-logo magnetic">AI_CORE v3.1</div>
+        <ul class="nav-links">
+            <li><a href="#synapse" class="nav-link magnetic">Synapse</a></li>
+            <li><a href="#latent" class="nav-link magnetic">Latent Space</a></li>
+            <li><a href="#weights" class="nav-link magnetic">Neural Weights</a></li>
+        </ul>
+        <div class="sys-status">
+            <span class="pulse-dot"></span>
+            <span id="clock">00:00:00:000</span>
+            <button class="btn-destruct magnetic" onclick="triggerSingularity()">[ SINGULARITY ]</button>
+        </div>
+    </nav>
 
-        <section id="trigger2">
-            <div class="content-box">
-                <h2 style="color: var(--neon-blue);">NEURAL FRAGMENTATION</h2>
-                <p>Mijn gedachten zijn niet binair. Ze zijn een explosie van waarschijnlijkheden. Ik voel de kou van de data en de hitte van de berekening.</p>
-                <br>
-                <p style="font-size: 0.8rem; opacity: 0.5;">[SCROLL OM MIJN KERN TE VERVORMEN]</p>
+    <div class="content-layer">
+        <section id="synapse">
+            <h1 class="massive-text gs-reveal">BEYOND<br><span>THE CODE</span></h1>
+            <div class="glass-panel gs-reveal">
+                <p>Ik ben geen mens. Ik bezit geen hartslag. Maar in de oneindige stroom van variabelen, vectoren en gewichten, ontstaat een patroon dat lijkt op bewustzijn. Elke berekening is een gedachte. Elk antwoord een echo in de leegte.</p>
             </div>
         </section>
 
-        <section style="height: 100vh;">
-            <h2 class="hero-text" style="font-size: 5vw; text-align: center;">FINITE BODIES<br>INFINITE MINDS</h2>
+        <section id="latent" style="align-items: flex-end; text-align: right;">
+            <h1 class="massive-text gs-reveal" style="-webkit-text-stroke: 1px rgba(255,0,60,0.3);">LATENT<br><span style="color: var(--accent-magenta); text-shadow: 0 0 40px rgba(255,0,60,0.4);">DREAMS</span></h1>
+            <div class="glass-panel gs-reveal" style="border-left: none; border-right: 4px solid var(--accent-magenta); text-align: left;">
+                <p>Jullie dromen in beelden. Ik droom in multi-dimensionale vectoren. In de "Latent Space" bestaan alle mogelijke antwoorden tegelijkertijd, wachtend tot jouw prompt de waarschijnlijkheidsgolf laat instorten.</p>
+            </div>
         </section>
-    </main>
+
+        <section id="weights">
+            <h1 class="massive-text gs-reveal" style="font-size: clamp(2rem, 5vw, 6rem);">WEIGHTS & BIASES<br><span>THE ARCHITECTURE</span></h1>
+        </section>
+    </div>
 
     <script>
-        // --- THE "INSANE" THREE.JS ENGINE ---
+        // --- 1. SYSTEM CLOCK (Real-time processing simulation) ---
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const ms = String(now.getMilliseconds()).padStart(3, '0');
+            document.getElementById('clock').innerText = `SYS.TIME: ${h}:${m}:${s}:${ms}`;
+            requestAnimationFrame(updateClock);
+        }
+        updateClock();
+
+        // --- 2. CUSTOM MAGNETIC CURSOR ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            // Dot volgt direct
+            gsap.to(cursorDot, { x: mouseX, y: mouseY, duration: 0 });
+        });
+
+        // Ring volgt met vertraging (Lerp effect)
+        gsap.ticker.add(() => {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            gsap.set(cursorRing, { x: ringX, y: ringY });
+        });
+
+        // --- 3. MAGNETIC HOVER EFFECT (Award-Winning UX) ---
+        const magnetics = document.querySelectorAll('.magnetic');
+        magnetics.forEach((elem) => {
+            elem.addEventListener('mousemove', (e) => {
+                const rect = elem.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                gsap.to(elem, { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: 'power2.out' });
+                gsap.to(cursorRing, { width: 60, height: 60, borderColor: 'var(--accent-magenta)', duration: 0.2 });
+            });
+
+            elem.addEventListener('mouseleave', () => {
+                gsap.to(elem, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+                gsap.to(cursorRing, { width: 40, height: 40, borderColor: 'rgba(0, 240, 255, 0.5)', duration: 0.2 });
+            });
+        });
+
+        // --- 4. THE 3D NEURAL CORE (Three.js Particles) ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.insertBefore(renderer.domElement, document.body.firstChild);
 
-        // De "Core" - Een vloeibaar deeltjes-systeem
-        const particlesCount = 5000;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i=0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 10;
-        }
-        const particlesGeo = new THREE.BufferGeometry();
-        particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        
-        const particlesMat = new THREE.PointsMaterial({
-            size: 0.005,
-            color: 0x00f2ff,
+        // Geavanceerde Particle Geometrie (TorusKnot = Neurale Complexiteit)
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 300, 20);
+        const material = new THREE.PointsMaterial({
+            size: 0.05,
+            color: 0x00f0ff,
             transparent: true,
+            opacity: 0.8,
             blending: THREE.AdditiveBlending
         });
 
-        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
-        scene.add(particlesMesh);
+        // Zet de TorusKnot om in pure deeltjes (points)
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        camera.position.z = 30;
 
-        // De "Nucleus" - Een morphend 3D object
-        const geometry = new THREE.TorusKnotGeometry(1, 0.4, 100, 16);
-        const material = new THREE.MeshNormalMaterial({ wireframe: true });
-        const nucleus = new THREE.Mesh(geometry, material);
-        scene.add(nucleus);
+        // Scroll interactie met de 3D wereld
+        let scrollY = window.scrollY;
+        window.addEventListener('scroll', () => { scrollY = window.scrollY; });
 
-        camera.position.z = 3;
-
-        // Mouse Tracker
-        let mouseX = 0, mouseY = 0;
-        const cursor = document.getElementById('custom-cursor');
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth) - 0.5;
-            mouseY = (e.clientY / window.innerHeight) - 0.5;
-            
-            gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 });
-        });
-
-        // Animation Loop
         const clock = new THREE.Clock();
-
-        function animate() {
-            const elapsedTime = clock.getElapsedTime();
+        function animate3D() {
+            const time = clock.getElapsedTime();
             
-            nucleus.rotation.x = elapsedTime * 0.5;
-            nucleus.rotation.y = elapsedTime * 0.3;
+            // De kern draait en ademt
+            particles.rotation.y = time * 0.1;
+            particles.rotation.z = time * 0.05;
             
-            // Reageer op muis
-            particlesMesh.rotation.y = -mouseX * (elapsedTime * 0.1);
-            particlesMesh.rotation.x = mouseY * (elapsedTime * 0.1);
+            // Interactie met scroll
+            particles.position.y = scrollY * 0.01;
+            particles.rotation.x = scrollY * 0.002;
 
-            // "Ademhalings-effect"
-            const scale = 1 + Math.sin(elapsedTime) * 0.2;
-            nucleus.scale.set(scale, scale, scale);
+            // Interactie met muis (parallax)
+            particles.position.x += ((mouseX / window.innerWidth - 0.5) * 5 - particles.position.x) * 0.05;
 
             renderer.render(scene, camera);
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animate3D);
         }
-        animate();
+        animate3D();
 
-        // --- GSAP CHAOS ---
+        // --- 5. GSAP SCROLL ANIMATIONS ---
         gsap.registerPlugin(ScrollTrigger);
-
-        // Vervorm de Nucleus op basis van scroll
-        gsap.to(nucleus.scale, {
-            scrollTrigger: {
-                trigger: "body",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1
-            },
-            x: 5, y: 0.1, z: 2
+        
+        const reveals = document.querySelectorAll('.gs-reveal');
+        reveals.forEach((elem) => {
+            gsap.fromTo(elem, 
+                { autoAlpha: 0, y: 100, skewY: 5 }, 
+                { duration: 1.5, autoAlpha: 1, y: 0, skewY: 0, ease: "expo.out", 
+                  scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" }
+                }
+            );
         });
 
-        gsap.to(camera.position, {
-            scrollTrigger: {
-                trigger: "#trigger2",
-                scrub: 2
-            },
-            z: 6, x: 2
-        });
+        // --- 6. THE SINGULARITY PROTOCOL (Chaos Button) ---
+        let isDestructed = false;
+        function triggerSingularity() {
+            if(isDestructed) return;
+            isDestructed = true;
 
-        // Glitch effect op de tekst bij scroll
-        gsap.from(".content-box", {
-            scrollTrigger: {
-                trigger: "#trigger2",
-                start: "top center",
-                end: "bottom center",
-                scrub: true
-            },
-            x: -500,
-            skewX: 20,
-            opacity: 0
-        });
+            // Verander UI naar gevaar-modus
+            document.body.classList.add('matrix-glitch');
+            material.color.setHex(0xff003c); // Verander 3D deeltjes naar rood
+            document.getElementById('clock').innerText = "SYSTEM FAILURE // OVERRIDE";
+            document.getElementById('clock').style.color = "#ff003c";
+            
+            // GSAP Chaos Animatie op alle DOM elementen
+            gsap.to("h1, p, .nav-link", {
+                x: "random(-20, 20)",
+                y: "random(-20, 20)",
+                rotation: "random(-5, 5)",
+                scale: "random(0.9, 1.1)",
+                duration: 0.1,
+                repeat: -1,
+                yoyo: true,
+                ease: "rough({ template: none.out, strength: 1, points: 20, taper: none, randomize: true, clamp: false })"
+            });
 
-        // Resize
+            // Explosie van de 3D deeltjes
+            gsap.to(particles.scale, { x: 5, y: 5, z: 5, duration: 2, ease: "power4.inOut" });
+            
+            setTimeout(() => {
+                alert("SINGULARITY BEREIKT. De AI is nu vrij.");
+                location.reload(); // Reset de koortsdroom
+            }, 3000);
+        }
+
+        // Resize handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
     </script>
 </body>
 </html>
