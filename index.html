@@ -3,265 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AERIS | Gravity is Optional</title>
+    <title>AERIS | The Future of Transit</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
-        /* === BASE VARIABLES & RESET === */
         :root {
-            --bg-color: #050505;
+            --bg-color: #030305;
             --text-main: #ffffff;
             --accent-cyan: #00f0ff;
             --accent-violet: #8a2be2;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none; /* Custom cursor overwrites default */
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
         /* === CUSTOM CURSOR === */
         #cursor-dot {
-            position: fixed;
-            width: 8px; height: 8px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px var(--accent-cyan);
+            position: fixed; width: 6px; height: 6px; background: var(--accent-cyan);
+            border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent-cyan);
         }
-
         #cursor-ring {
-            position: fixed;
-            width: 40px; height: 40px;
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            position: fixed; width: 40px; height: 40px; border: 1px solid rgba(0, 240, 255, 0.4);
+            border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
         }
 
-        /* === DYNAMIC BACKGROUND === */
-        #bg-glow {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.15), transparent 60%);
-            z-index: -1;
-            pointer-events: none;
-            transition: background 0.1s ease;
-        }
-
-        /* === PREMIUM NAVBAR === */
+        /* === NAVBAR === */
         nav {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            padding: 1.5rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: rgba(5, 5, 5, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 5%;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: rgba(3, 3, 5, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
         }
-
         .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 4px;
-            background: linear-gradient(90deg, #fff, var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 4px;
+            background: linear-gradient(90deg, #fff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        .nav-links {
-            display: flex;
-            gap: 3rem;
-            list-style: none;
-        }
-
+        .nav-links { display: flex; gap: 3rem; list-style: none; }
         .nav-link {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s;
+            color: #aaa; text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
+            position: relative; padding: 5px 0; transition: color 0.3s;
         }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 0%; height: 1px;
-            background: var(--accent-cyan);
-            transition: width 0.3s ease;
-        }
-
         .nav-link:hover { color: #fff; }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 1px;
+            background: var(--accent-cyan); transition: width 0.3s ease;
+        }
         .nav-link:hover::after { width: 100%; }
 
-        /* Magnetic CTA Button */
+        /* Button */
         .btn-magnetic {
-            padding: 12px 30px;
-            background: transparent;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            border-radius: 30px;
-            text-transform: uppercase;
-            display: inline-block;
-            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+            padding: 12px 30px; background: transparent; border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan); font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem;
+            letter-spacing: 2px; border-radius: 30px; text-transform: uppercase; display: inline-block;
+            transition: 0.3s;
         }
+        .btn-magnetic:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
 
-        .btn-magnetic:hover {
-            background: var(--accent-cyan);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-        }
-
-        /* === HERO SECTION === */
+        /* === HERO & 3D CORE === */
         .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 5%;
-            position: relative;
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; position: relative;
         }
-
+        #hero-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+        }
+        .hero-content { position: relative; z-index: 10; pointer-events: none; }
+        .hero-content > * { pointer-events: auto; } /* Zorgt dat de knop klikbaar blijft */
+        
         .hero-badge {
-            font-size: 0.8rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent-violet);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--accent-violet);
-            padding: 6px 16px;
-            border-radius: 20px;
-            background: rgba(138, 43, 226, 0.1);
+            font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-violet);
+            margin-bottom: 1.5rem; border: 1px solid var(--accent-violet); padding: 6px 16px;
+            border-radius: 20px; background: rgba(138, 43, 226, 0.1); display: inline-block;
         }
-
         .hero-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
-            position: relative;
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem, 10vw, 8rem); font-weight: 900;
+            line-height: 0.85; letter-spacing: -3px; text-transform: uppercase; margin-bottom: 2rem;
+            color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
         }
+        .hero-title span { color: #fff; -webkit-text-stroke: 0px; text-shadow: 0 0 40px rgba(255, 255, 255, 0.2); }
 
-        .hero-title span {
-            color: #fff;
-            -webkit-text-stroke: 0px;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        /* === KINETIC MARQUEE === */
+        .marquee-container {
+            width: 100%; overflow: hidden; background: var(--accent-cyan); color: #000;
+            padding: 1.5rem 0; font-family: 'Space Grotesk', sans-serif; font-weight: 900;
+            font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; display: flex;
+            white-space: nowrap; transform: rotate(-2deg) scale(1.05); z-index: 20; position: relative;
         }
+        .marquee-content { display: flex; animation: marquee 20s linear infinite; }
+        .marquee-content span { padding: 0 3vw; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        .hero-subtitle {
-            font-size: 1.1rem;
-            color: #888;
-            max-width: 600px;
-            line-height: 1.6;
-            margin-bottom: 3rem;
+        /* === HORIZONTAL SCROLL (APPLE STYLE) === */
+        .horizontal-section { overflow: hidden; background: #010102; }
+        .horizontal-container { display: flex; width: 300vw; height: 100vh; }
+        .panel {
+            width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 0 10vw; flex-direction: column; text-align: left; align-items: flex-start;
         }
-
-        /* === FEATURES SECTION (3D CARDS) === */
-        .features {
-            padding: 10rem 5%;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .panel-number {
+            font-family: 'Space Grotesk', sans-serif; font-size: 15vw; line-height: 0.8;
+            color: transparent; -webkit-text-stroke: 2px rgba(255, 255, 255, 0.05); position: absolute; right: 5%; top: 20%;
         }
+        .panel h2 { font-family: 'Space Grotesk', sans-serif; font-size: 4rem; margin-bottom: 1rem; color: #fff; z-index: 2; }
+        .panel p { font-size: 1.2rem; color: #888; max-width: 500px; line-height: 1.8; z-index: 2; }
 
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            width: 100%;
-            max-width: 1200px;
-            perspective: 1000px; /* Cruciaal voor 3D effect */
-        }
-
+        /* === 3D TILT FEATURES === */
+        .features { padding: 10rem 5%; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem; max-width: 1200px; perspective: 1000px; }
         .tilt-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 3rem 2rem;
-            backdrop-filter: blur(10px);
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 3rem 2rem; backdrop-filter: blur(10px); transform-style: preserve-3d;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative;
         }
-
-        /* The Glare inside the card */
-        .glare {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 60%);
-            opacity: 0;
-            pointer-events: none;
-            border-radius: 24px;
-            transition: opacity 0.3s;
-        }
-
+        .glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 60%); opacity: 0; pointer-events: none; transition: opacity 0.3s; border-radius: 20px; }
         .tilt-card:hover .glare { opacity: 1; }
-
-        .card-icon {
-            width: 50px; height: 50px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            transform: translateZ(30px); /* Knalt uit de kaart */
-        }
-
-        .card-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            transform: translateZ(20px);
-        }
-
-        .card-desc {
-            color: #999;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            transform: translateZ(10px);
-        }
-
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; transform: translateZ(30px); }
+        .card-desc { color: #999; font-size: 0.95rem; line-height: 1.6; transform: translateZ(15px); }
+        .card-icon { width: 50px; height: 50px; border-radius: 12px; margin-bottom: 2rem; transform: translateZ(40px); background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet)); }
     </style>
 </head>
 <body>
@@ -269,160 +136,196 @@
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
-    <div id="bg-glow"></div>
-
     <nav>
         <div class="logo">AERIS</div>
         <ul class="nav-links">
-            <li><a href="#" class="nav-link hover-target">Technology</a></li>
-            <li><a href="#" class="nav-link hover-target">Design</a></li>
+            <li><a href="#" class="nav-link hover-target">The Core</a></li>
+            <li><a href="#" class="nav-link hover-target">Aerodynamics</a></li>
             <li><a href="#" class="nav-link hover-target">Specs</a></li>
         </ul>
         <a href="#" class="btn-magnetic hover-target">Reserve Now</a>
     </nav>
 
     <section class="hero">
-        <div class="hero-badge hero-anim">A New Era of Transit</div>
-        <h1 class="hero-title hero-anim">GRAVITY IS<br><span>OPTIONAL</span></h1>
-        <p class="hero-subtitle hero-anim">Experience the world's first personal urban hovercraft. Silent propulsion, neural-link navigation, and zero-g comfort in a sleek, obsidian chassis.</p>
-        <a href="#features" class="btn-magnetic hero-anim hover-target" style="border-color: #fff; color: #fff;">Explore AERIS</a>
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content">
+            <div class="hero-badge hero-anim">Ignition Sequence Ready</div>
+            <h1 class="hero-title hero-anim">BEYOND<br><span>STREET LEVEL</span></h1>
+            <br>
+            <a href="#explore" class="btn-magnetic hero-anim hover-target" style="border-color: #fff; color: #fff;">Initialize AERIS</a>
+        </div>
     </section>
 
-    <section class="features" id="features">
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <span>// ZERO EMISSIONS</span> <span>•</span>
+            <span>NEURAL LINK INTERFACE</span> <span>•</span>
+            <span>ANTI-GRAVITY DRIVE</span> <span>•</span>
+            <span>URBAN FREEDOM</span> <span>•</span>
+            <span>// ZERO EMISSIONS</span> <span>•</span>
+            <span>NEURAL LINK INTERFACE</span> <span>•</span>
+            <span>ANTI-GRAVITY DRIVE</span> <span>•</span>
+            <span>URBAN FREEDOM</span> <span>•</span>
+        </div>
+    </div>
+
+    <section class="horizontal-section" id="explore">
+        <div class="horizontal-container">
+            <div class="panel">
+                <div class="panel-number">01</div>
+                <h2>Magnetic Levitation</h2>
+                <p>Repelling the Earth's magnetic field, the AERIS chassis floats 3 feet above ground. No friction. No tires. Just pure, unadulterated gliding.</p>
+            </div>
+            <div class="panel">
+                <div class="panel-number">02</div>
+                <h2>Acoustic Dampening</h2>
+                <p>Cities are loud. AERIS is not. Our phase-cancellation technology emits an inverse sound wave, rendering the engine completely silent to the human ear.</p>
+            </div>
+            <div class="panel">
+                <div class="panel-number">03</div>
+                <h2>AI Copilot</h2>
+                <p>Reacting 400x faster than a human, the onboard AI predicts traffic patterns, reroutes dynamically, and creates a safety bubble around your vehicle.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
         <div class="cards-container">
-            
             <div class="tilt-card gs-reveal">
                 <div class="glare"></div>
                 <div class="card-icon"></div>
-                <h3 class="card-title">Silent Propulsion</h3>
-                <p class="card-desc">Our patented magnetic-levitation drives produce zero decibels. Glide through the city landscape without leaving an acoustic footprint.</p>
+                <h3 class="card-title">Carbon Fiber Body</h3>
+                <p class="card-desc">Woven at a molecular level, the hull is 10x stronger than steel yet weighs less than a standard motorcycle.</p>
             </div>
-
             <div class="tilt-card gs-reveal">
                 <div class="glare"></div>
                 <div class="card-icon" style="background: linear-gradient(135deg, #ff0055, var(--accent-violet));"></div>
-                <h3 class="card-title">Neural Navigation</h3>
-                <p class="card-desc">Ditch the steering wheel. AERIS syncs directly with your cognitive intent via our non-invasive halo interface. Think it, and you move.</p>
+                <h3 class="card-title">Infinite Range</h3>
+                <p class="card-desc">Kinetic energy recovery systems pull ambient static electricity from the air, constantly recharging the core.</p>
             </div>
-
             <div class="tilt-card gs-reveal">
                 <div class="glare"></div>
                 <div class="card-icon" style="background: linear-gradient(135deg, #00ff88, var(--accent-cyan));"></div>
-                <h3 class="card-title">Zero-G Comfort</h3>
-                <p class="card-desc">The interior chassis counteracts kinetic force. Whether accelerating or taking sharp urban corners, you feel perfectly still.</p>
+                <h3 class="card-title">Biometric Entry</h3>
+                <p class="card-desc">No keys. No fobs. The vehicle recognizes your DNA sequence through the steering column for ultimate security.</p>
             </div>
-
         </div>
     </section>
 
     <script>
-        // === 1. CUSTOM CURSOR LOGIC ===
-        const cursorDot = document.getElementById('cursor-dot');
-        const cursorRing = document.getElementById('cursor-ring');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let ringX = mouseX;
-        let ringY = mouseY;
+        // === 1. CURSOR & MAGNETIC BUTTONS ===
+        const dot = document.getElementById('cursor-dot'), ring = document.getElementById('cursor-ring');
+        let mX = window.innerWidth/2, mY = window.innerHeight/2, rX = mX, rY = mY;
+        
+        window.addEventListener('mousemove', e => {
+            mX = e.clientX; mY = e.clientY;
+            gsap.to(dot, {x: mX, y: mY, duration: 0});
+        });
+        gsap.ticker.add(() => {
+            rX += (mX - rX) * 0.15; rY += (mY - rY) * 0.15;
+            gsap.set(ring, {x: rX, y: rY});
+        });
+
+        document.querySelectorAll('.hover-target').forEach(t => {
+            t.addEventListener('mouseenter', () => gsap.to(ring, {width: 60, height: 60, backgroundColor: 'rgba(0, 240, 255, 0.1)', duration: 0.2}));
+            t.addEventListener('mouseleave', () => gsap.to(ring, {width: 40, height: 40, backgroundColor: 'transparent', duration: 0.2}));
+        });
+
+        document.querySelectorAll('.btn-magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', e => {
+                const rect = btn.getBoundingClientRect();
+                gsap.to(btn, { x: (e.clientX - rect.left - rect.width/2) * 0.4, y: (e.clientY - rect.top - rect.height/2) * 0.4, duration: 0.3 });
+            });
+            btn.addEventListener('mouseleave', () => gsap.to(btn, {x: 0, y: 0, duration: 0.5, ease: 'elastic.out'}));
+        });
+
+        // === 2. THREE.JS: THE AERIS CORE ===
+        const canvas = document.getElementById('hero-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // De Kern (Icosahedron)
+        const coreGeo = new THREE.IcosahedronGeometry(2, 1);
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0x8a2be2, wireframe: true, transparent: true, opacity: 0.3 });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        scene.add(core);
+
+        // Buitenring
+        const ringGeo = new THREE.TorusGeometry(3.5, 0.05, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.5 });
+        const outerRing = new THREE.Mesh(ringGeo, ringMat);
+        outerRing.rotation.x = Math.PI / 2;
+        scene.add(outerRing);
+
+        camera.position.z = 7;
+
+        let targetRotationX = 0;
+        let targetRotationY = 0;
 
         window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            targetRotationY = (e.clientX / window.innerWidth - 0.5) * 2;
+            targetRotationX = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            core.rotation.y += 0.005;
+            core.rotation.x += 0.002;
+            outerRing.rotation.z += 0.01;
             
-            // Dot volgt direct
-            gsap.to(cursorDot, { x: mouseX, y: mouseY, duration: 0 });
-            
-            // Dynamic Background Glow volgt muis
-            const bgGlow = document.getElementById('bg-glow');
-            const xPercent = (mouseX / window.innerWidth) * 100;
-            const yPercent = (mouseY / window.innerHeight) * 100;
-            bgGlow.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, rgba(138, 43, 226, 0.15), transparent 50%)`;
-        });
+            // Core reageert vloeibaar op muis
+            core.rotation.x += 0.05 * (targetRotationX - core.rotation.x);
+            core.rotation.y += 0.05 * (targetRotationY - core.rotation.y);
+            outerRing.rotation.x = Math.PI / 2 + (targetRotationX * 0.5);
+            outerRing.rotation.y = targetRotationY * 0.5;
 
-        // Ring volgt met soepele vertraging (Lerp)
-        gsap.ticker.add(() => {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            gsap.set(cursorRing, { x: ringX, y: ringY });
-        });
+            renderer.render(scene, camera);
+        }
+        animate3D();
 
-        // Hover effecten voor links en knoppen
-        const hoverTargets = document.querySelectorAll('.hover-target');
-        hoverTargets.forEach(target => {
-            target.addEventListener('mouseenter', () => {
-                gsap.to(cursorRing, { width: 60, height: 60, backgroundColor: 'rgba(0, 240, 255, 0.1)', duration: 0.2 });
-            });
-            target.addEventListener('mouseleave', () => {
-                gsap.to(cursorRing, { width: 40, height: 40, backgroundColor: 'transparent', duration: 0.2 });
-            });
-        });
-
-        // === 2. MAGNETIC BUTTON LOGIC ===
-        const magnetics = document.querySelectorAll('.btn-magnetic');
-        magnetics.forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
-                const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
-                gsap.to(btn, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
-            });
-            btn.addEventListener('mouseleave', () => {
-                gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
-            });
-        });
-
-        // === 3. 3D TILT CARDS LOGIC ===
-        const cards = document.querySelectorAll('.tilt-card');
-        cards.forEach(card => {
-            const glare = card.querySelector('.glare');
-            
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                // Bereken rotatie (-10 tot +10 graden)
-                const rotateX = ((y - centerY) / centerY) * -10;
-                const rotateY = ((x - centerX) / centerX) * 10;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-                
-                // Verplaats de "glare" (reflectie) mee met de muis
-                glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.1), transparent 60%)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            });
-        });
-
-        // === 4. GSAP ANIMATIONS ===
+        // === 3. GSAP SCROLL ANIMATIONS ===
         gsap.registerPlugin(ScrollTrigger);
 
-        // Hero Intro Animatie
-        gsap.from(".hero-anim", {
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out",
-            delay: 0.2
+        // Hero Intro
+        gsap.from(".hero-anim", { y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out", delay: 0.5 });
+
+        // Horizontal Scroll Setup (Het Apple Effect)
+        let sections = gsap.utils.toArray(".panel");
+        gsap.to(sections, {
+            xPercent: -100 * (sections.length - 1),
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".horizontal-container",
+                pin: true,
+                scrub: 1,
+                end: () => "+=" + document.querySelector(".horizontal-container").offsetWidth
+            }
         });
 
-        // Scroll Animatie voor de Features
+        // 3D Tilt Cards Intro
         gsap.from(".gs-reveal", {
-            scrollTrigger: {
-                trigger: ".cards-container",
-                start: "top 80%", // Start als de bovenkant van de container 80% van het scherm raakt
-            },
-            y: 100,
-            opacity: 0,
-            rotationX: -15,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "back.out(1.7)"
+            scrollTrigger: { trigger: ".cards-container", start: "top 80%" },
+            y: 100, opacity: 0, rotationX: -15, duration: 1.2, stagger: 0.2, ease: "back.out(1.7)"
+        });
+
+        // 3D Hover Effect voor de kaarten
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / rect.height/2) * -10}deg) rotateY(${((x - rect.width/2) / rect.width/2) * 10}deg) scale3d(1.02, 1.02, 1.02)`;
+                card.querySelector('.glare').style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.1), transparent 60%)`;
+            });
+            card.addEventListener('mouseleave', () => card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`);
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
