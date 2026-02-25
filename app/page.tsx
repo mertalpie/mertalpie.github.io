@@ -1,29 +1,31 @@
+import AnimatedBackground from '@/components/AnimatedBackground';
+import HeroSection from '@/components/sections/HeroSection';
+import ProductSection from '@/components/sections/ProductSection';
+import FeaturesSection from '@/components/sections/FeaturesSection';
+import UseCasesSection from '@/components/sections/UseCasesSection';
+import PricingSection from '@/components/sections/PricingSection';
+import DemoSection from '@/components/sections/DemoSection';
+import TestimonialsSection from '@/components/sections/TestimonialsSection';
+import FAQSection from '@/components/sections/FAQSection';
+import ContactSection from '@/components/sections/ContactSection';
 import Footer from '@/components/Footer';
-
-const sections = [
-  { id: 'home', label: 'Home' },
-  { id: 'product', label: 'Product' },
-  { id: 'features', label: 'Features' },
-  { id: 'usecases', label: 'Use Cases' },
-  { id: 'pricing', label: 'Pricing' },
-  { id: 'demo', label: 'Demo' },
-  { id: 'faq', label: 'FAQ' },
-  { id: 'contact', label: 'Contact' },
-];
 
 export default function Home() {
   return (
-    <main>
-      {sections.map((section) => (
-        <section
-          key={section.id}
-          id={section.id}
-          className="min-h-screen flex items-center justify-center"
-        >
-          <h2 className="text-4xl font-bold text-slate-100">{section.label}</h2>
-        </section>
-      ))}
-      <Footer />
-    </main>
+    <>
+      <AnimatedBackground />
+      <main className="relative z-10">
+        <HeroSection />
+        <ProductSection />
+        <FeaturesSection />
+        <UseCasesSection />
+        <PricingSection />
+        <DemoSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <ContactSection />
+        <Footer />
+      </main>
+    </>
   );
 }
