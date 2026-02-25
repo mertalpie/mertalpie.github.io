@@ -3,315 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI // NEURAL KINETICS (OPTIMIZED)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <title>AI // ORBITAL INTERFACE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
-        :root {
-            --bg: #010103;
-            --cyan: #00f0ff;
-            --magenta: #ff0055;
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Space Mono', monospace;
+        body { 
+            background-color: #000; 
+            color: #00f0ff; 
+            font-family: 'Space Mono', monospace; 
             overflow: hidden; 
         }
+        canvas { 
+            position: absolute; 
+            top: 0; left: 0; 
+            z-index: 1; 
+            cursor: grab;
+        }
+        canvas:active { cursor: grabbing; }
 
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
-
-        /* --- UI OVERLAYS --- */
+        /* Tech UI Overlay */
         #ui-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 10;
+            pointer-events: none; /* Laat muisklikken door naar de 3D aarde */
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            pointer-events: none; 
-            padding: 2rem;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            color: var(--cyan);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
             text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-        }
-
-        .status-blink { animation: blink 1s infinite step-end; }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* --- THE NEURAL PROMPT (FIXED VISIBILITY & Z-INDEX) --- */
-        #interaction-zone {
-            position: absolute;
-            bottom: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 650px;
-            pointer-events: auto; /* Zorgt dat je kunt klikken */
-            text-align: center;
-            z-index: 1000; /* Staat nu gegarandeerd bovenaan */
-            
-            /* Nieuwe styling voor betere leesbaarheid */
-            background: rgba(1, 1, 3, 0.7);
-            padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.1);
-        }
-
-        .prompt-title {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 0.9rem;
-            color: var(--cyan);
-            margin-bottom: 1.5rem;
-            letter-spacing: 4px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(0, 240, 255, 0.5);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(5px);
             border-radius: 8px;
-            padding: 1.5rem;
+        }
+
+        .data-panel {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            text-align: right;
+            font-size: 0.75rem;
+            line-height: 1.8;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .data-panel span { color: #00f0ff; }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            font-size: 0.8rem;
             color: #fff;
-            font-family: 'Space Mono', monospace;
-            font-size: 1.5rem;
-            text-align: center;
-            text-transform: uppercase;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--magenta);
-            background: rgba(255, 0, 85, 0.05);
-            box-shadow: 0 0 25px rgba(255, 0, 85, 0.4);
-        }
-
-        input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.3); }
-
-        .glitch-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: white;
-            mix-blend-mode: difference;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
 
-    <div class="glitch-screen" id="flash"></div>
-
     <div id="ui-layer">
         <header>
-            <div>SYSTEM: <span style="color: #fff;">OPTIMIZED</span></div>
-            <div>MODE: <span class="status-blink" style="color: var(--magenta);">AWAITING INPUT</span></div>
-            <div>FPS: <span id="fps">60</span></div>
+            <div>SYSTEM: <span style="color: #fff;">ORBITAL VIEW</span></div>
+            <div>STATUS: <span style="color: #00ff00;">STABLE</span></div>
         </header>
-    </div>
-
-    <div id="interaction-zone">
-        <div class="prompt-title">FEED A THOUGHT INTO THE CORE</div>
-        <input type="text" id="neural-input" placeholder="KLIK HIER OM TE TYPEN..." autocomplete="off" spellcheck="false">
+        <div class="controls-hint">
+            [ MOUSE LEFT: ROTATE ]<br>
+            [ SCROLL: ZOOM ]
+        </div>
+        <div class="data-panel">
+            CAMERA ALTITUDE: <span id="alt-data">35000 KM</span><br>
+            ROTATION SPEED: <span>0.05 DEG/S</span><br>
+            TARGET: <span>EARTH</span>
+        </div>
     </div>
 
     <script>
-        // ==========================================
-        // GEOPTIMALISEERDE 3D ENGINE
-        // ==========================================
-        
+        // --- 1. SCENE SETUP ---
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.z = 250;
+        
+        // Voeg sterren toe op de achtergrond
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 3000;
+        const posArray = new Float32Array(starsCount * 3);
+        for(let i = 0; i < starsCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 200; // Verspreid sterren ver weg
+        }
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const starsMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0xffffff, transparent: true, opacity: 0.8 });
+        const starMesh = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(starMesh);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true }); // Antialias uit voor betere performance
+        // --- 2. CAMERA & RENDERER ---
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 3; // Start positie
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        // Beperk pixel ratio voor performance
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        // --- PARTICLE SETUP (VERLAAGD VOOR PERFORMANCE) ---
-        const particleCount = 6000; 
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const targetPositions = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
+        // --- 3. CONTROLS (ZOOM & ROTATE) ---
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Zorgt voor vloeiende vertraging
+        controls.dampingFactor = 0.05;
+        controls.enablePan = false; // Voorkom dat je de aarde uit het midden sleept
+        controls.minDistance = 1.2; // Maximaal inzoomen
+        controls.maxDistance = 6;   // Maximaal uitzoomen
 
-        const colorCyan = new THREE.Color(0x00f0ff);
-        const colorMagenta = new THREE.Color(0xff0055);
+        // --- 4. TEXTURE LOADER ---
+        // We gebruiken publieke, betrouwbare texture maps voor realisme
+        const textureLoader = new THREE.TextureLoader();
+        
+        // --- 5. DE AARDE (EARTH MESH) ---
+        const earthGeometry = new THREE.SphereGeometry(1, 64, 64); // Hoge resolutie bol
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg'),
+            bumpMap: textureLoader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthbump1k.jpg'),
+            bumpScale: 0.015, // Diepte van bergen
+            specularMap: textureLoader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthspec1k.jpg'),
+            specular: new THREE.Color('grey') // Reflectie van oceanen
+        });
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        scene.add(earth);
 
-        for(let i = 0; i < particleCount; i++) {
-            const x = (Math.random() - 0.5) * 600;
-            const y = (Math.random() - 0.5) * 600;
-            const z = (Math.random() - 0.5) * 600;
-
-            positions[i*3] = x; positions[i*3+1] = y; positions[i*3+2] = z;
-            targetPositions[i*3] = x; targetPositions[i*3+1] = y; targetPositions[i*3+2] = z;
-
-            const mixedColor = Math.random() > 0.5 ? colorCyan : colorMagenta;
-            colors[i*3] = mixedColor.r; colors[i*3+1] = mixedColor.g; colors[i*3+2] = mixedColor.b;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const material = new THREE.PointsMaterial({
-            size: 3.5, // Grotere deeltjes, zodat ze beter opvallen ondanks dat het er minder zijn
-            vertexColors: true,
+        // --- 6. WOLKENLAAG (CLOUDS MESH) ---
+        // Wolken zijn een apart object, iets groter dan de aarde zelf
+        const cloudGeometry = new THREE.SphereGeometry(1.01, 64, 64);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthcloudmap.jpg'),
             transparent: true,
-            opacity: 0.9,
-            blending: THREE.AdditiveBlending,
+            opacity: 0.4,
+            blending: THREE.AdditiveBlending, // Verwijdert het zwart uit de texture, laat alleen witte wolken over
             depthWrite: false
         });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        scene.add(clouds);
 
-        const particlesMesh = new THREE.Points(geometry, material);
-        scene.add(particlesMesh);
+        // --- 7. VERLICHTING (LIGHTING) ---
+        // Basislicht zodat de donkere kant niet 100% zwart is
+        const ambientLight = new THREE.AmbientLight(0x222222);
+        scene.add(ambientLight);
 
-        // --- TEXT TO PARTICLES ---
-        function textToParticles(text) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // De "Zon" (Richtingslicht)
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        sunLight.position.set(5, 3, 5); // Zon komt van schuin rechtsboven
+        scene.add(sunLight);
 
-            ctx.font = `bold ${Math.min(window.innerWidth / text.length * 1.5, 250)}px 'Syncopate', sans-serif`;
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(text.toUpperCase(), canvas.width / 2, canvas.height / 2);
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-            let particleIndex = 0;
-            const step = Math.round(Math.max(window.innerWidth, window.innerHeight) / 100); 
-            
-            for (let y = 0; y < canvas.height; y += step) {
-                for (let x = 0; x < canvas.width; x += step) {
-                    const index = (x + y * canvas.width) * 4;
-                    const alpha = imageData[index + 3];
-
-                    if (alpha > 128 && particleIndex < particleCount) {
-                        targetPositions[particleIndex * 3] = (x - canvas.width / 2) * 0.35;
-                        targetPositions[particleIndex * 3 + 1] = -(y - canvas.height / 2) * 0.35;
-                        targetPositions[particleIndex * 3 + 2] = (Math.random() - 0.5) * 10;
-                        particleIndex++;
-                    }
-                }
-            }
-
-            for(let i = particleIndex; i < particleCount; i++) {
-                targetPositions[i*3] = (Math.random() - 0.5) * 800;
-                targetPositions[i*3+1] = (Math.random() - 0.5) * 800;
-                targetPositions[i*3+2] = (Math.random() - 0.5) * 800 - 300; 
-            }
-            
-            gsap.fromTo("#flash", {opacity: 1}, {opacity: 0, duration: 0.5, ease: "power2.out"});
-        }
-
-        // --- INTERACTION ---
-        const inputField = document.getElementById('neural-input');
-        
-        inputField.addEventListener('keydown', (e) => {
-            if(e.key === 'Enter') {
-                const text = inputField.value.trim();
-                if(text.length > 0) {
-                    textToParticles(text);
-                    inputField.value = ''; 
-                    inputField.blur();     
-                } else {
-                    textToParticles("SYSTEM");
-                }
-            }
-        });
-
-        setTimeout(() => textToParticles("AWAKE"), 500);
-
-        // --- MOUSE TRACKING ---
-        const mouse3D = new THREE.Vector3(0,0,0);
-        window.addEventListener('mousemove', (event) => {
-            const mx = (event.clientX / window.innerWidth) * 2 - 1;
-            const my = -(event.clientY / window.innerHeight) * 2 + 1;
-            
-            mouse3D.set(mx, my, 0.5);
-            mouse3D.unproject(camera);
-            mouse3D.sub(camera.position).normalize();
-            const distance = -camera.position.z / mouse3D.z;
-            mouse3D.copy(camera.position).add(mouse3D.multiplyScalar(distance));
-        });
-
-        // --- OPTIMIZED ANIMATION LOOP ---
-        let lastTime = performance.now();
-        let frames = 0;
-        const fpsElement = document.getElementById('fps');
+        // --- 8. ANIMATIE LOOP ---
+        const altitudeText = document.getElementById('alt-data');
 
         function animate() {
-            const time = performance.now();
-            frames++;
-            
-            // FPS Counter
-            if (time >= lastTime + 1000) {
-                fpsElement.innerText = Math.round((frames * 1000) / (time - lastTime));
-                frames = 0;
-                lastTime = time;
-            }
+            requestAnimationFrame(animate);
 
-            const positionsArr = particlesMesh.geometry.attributes.position.array;
-            const interactionRadiusSq = 15000; // Radius in kwadraat voor snellere berekening
+            // Automatische rotatie
+            earth.rotation.y += 0.0005;
+            clouds.rotation.y += 0.0007; // Wolken draaien net iets sneller voor een weers-effect
+            clouds.rotation.x += 0.0001; 
 
-            for(let i = 0; i < particleCount; i++) {
-                const px = positionsArr[i*3];
-                const py = positionsArr[i*3+1];
-                const pz = positionsArr[i*3+2];
+            // Sterren heel langzaam laten draaien
+            starMesh.rotation.y -= 0.0002;
 
-                let tx = targetPositions[i*3];
-                let ty = targetPositions[i*3+1];
-                let tz = targetPositions[i*3+2];
+            // Update controls (nodig voor damping/vloeiend slepen)
+            controls.update();
 
-                // FYSICA: Muis Afstoting (Snellere wiskunde zonder Math.sqrt in de basis)
-                const dx = mouse3D.x - px;
-                const dy = mouse3D.y - py;
-                const distSq = dx*dx + dy*dy;
-                
-                if(distSq < interactionRadiusSq) {
-                    const force = (interactionRadiusSq - distSq) / interactionRadiusSq;
-                    tx -= dx * force * 0.1;
-                    ty -= dy * force * 0.1;
-                    tz += force * 20;
-                }
-
-                // Beweeg deeltje naar target
-                positionsArr[i*3] += (tx - px) * 0.08;
-                positionsArr[i*3+1] += (ty - py) * 0.08;
-                positionsArr[i*3+2] += (tz - pz) * 0.08;
-            }
-
-            particlesMesh.geometry.attributes.position.needsUpdate = true;
-            particlesMesh.rotation.y += 0.001;
-            particlesMesh.rotation.x += 0.0005;
+            // UI Update: Bereken hoogte op basis van zoom (camera distance)
+            const altitude = Math.floor((camera.position.length() - 1) * 10000);
+            altitudeText.innerText = altitude + " KM";
 
             renderer.render(scene, camera);
-            requestAnimationFrame(animate);
         }
 
         animate();
 
+        // --- 9. RESPONSIVE MAKEN ---
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
