@@ -3,261 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI // SOLAR SYSTEM OVERRIDE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>AERIS | Gravity is Optional</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #000; color: #00f0ff; font-family: 'Space Mono', monospace; overflow: hidden; }
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; cursor: crosshair; }
-
-        #ui-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; pointer-events: none; padding: 2rem;
-            display: flex; flex-direction: column; justify-content: space-between;
+        /* === BASE VARIABLES & RESET === */
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --accent-cyan: #00f0ff;
+            --accent-violet: #8a2be2;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px;
-            background: rgba(0, 0, 0, 0.5); padding: 15px 30px;
-            border: 1px solid rgba(0, 240, 255, 0.3); backdrop-filter: blur(10px);
-            border-radius: 8px; box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Custom cursor overwrites default */
         }
 
-        .btn-reset {
-            pointer-events: auto;
-            background: transparent; border: 1px solid #00f0ff; color: #00f0ff;
-            padding: 8px 15px; font-family: 'Space Mono', monospace;
-            cursor: pointer; text-transform: uppercase; transition: 0.3s;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
-        .btn-reset:hover { background: #00f0ff; color: #000; box-shadow: 0 0 15px #00f0ff; }
 
-        .data-panel {
-            position: absolute; bottom: 2rem; right: 2rem; text-align: right;
-            font-size: 0.8rem; line-height: 2; color: rgba(255, 255, 255, 0.6);
+        /* === CUSTOM CURSOR === */
+        #cursor-dot {
+            position: fixed;
+            width: 8px; height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--accent-cyan);
         }
-        .data-panel span { color: #fff; font-weight: bold; }
-        .target-name { font-size: 1.5rem; color: #00f0ff; text-shadow: 0 0 10px #00f0ff; }
 
-        .controls-hint {
-            position: absolute; bottom: 2rem; left: 2rem;
-            font-size: 0.8rem; color: #fff; opacity: 0.5; line-height: 1.8;
+        #cursor-ring {
+            position: fixed;
+            width: 40px; height: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
+
+        /* === DYNAMIC BACKGROUND === */
+        #bg-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.15), transparent 60%);
+            z-index: -1;
+            pointer-events: none;
+            transition: background 0.1s ease;
+        }
+
+        /* === PREMIUM NAVBAR === */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0%; height: 1px;
+            background: var(--accent-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover { color: #fff; }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Magnetic CTA Button */
+        .btn-magnetic {
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            display: inline-block;
+            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-magnetic:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* === HERO SECTION === */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+        }
+
+        .hero-badge {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-violet);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--accent-violet);
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: rgba(138, 43, 226, 0.1);
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        .hero-title span {
+            color: #fff;
+            -webkit-text-stroke: 0px;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #888;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+        }
+
+        /* === FEATURES SECTION (3D CARDS) === */
+        .features {
+            padding: 10rem 5%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            width: 100%;
+            max-width: 1200px;
+            perspective: 1000px; /* Cruciaal voor 3D effect */
+        }
+
+        .tilt-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* The Glare inside the card */
+        .glare {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 60%);
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 24px;
+            transition: opacity 0.3s;
+        }
+
+        .tilt-card:hover .glare { opacity: 1; }
+
+        .card-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            transform: translateZ(30px); /* Knalt uit de kaart */
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transform: translateZ(20px);
+        }
+
+        .card-desc {
+            color: #999;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            transform: translateZ(10px);
+        }
+
     </style>
 </head>
 <body>
 
-    <div id="ui-layer">
-        <header>
-            <div>SYSTEM: <span style="color: #fff;">SOLAR TRACKING MATRIX</span></div>
-            <button class="btn-reset" onclick="resetView()">[ ZOOM OUT TO SUN ]</button>
-        </header>
-        <div class="controls-hint">
-            [ CLICK PLANET: AUTO-FOCUS ]<br>
-            [ SCROLL: MANUAL ZOOM ]<br>
-            [ DRAG: ORBIT CAMERA ]
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <div id="bg-glow"></div>
+
+    <nav>
+        <div class="logo">AERIS</div>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-link hover-target">Technology</a></li>
+            <li><a href="#" class="nav-link hover-target">Design</a></li>
+            <li><a href="#" class="nav-link hover-target">Specs</a></li>
+        </ul>
+        <a href="#" class="btn-magnetic hover-target">Reserve Now</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge hero-anim">A New Era of Transit</div>
+        <h1 class="hero-title hero-anim">GRAVITY IS<br><span>OPTIONAL</span></h1>
+        <p class="hero-subtitle hero-anim">Experience the world's first personal urban hovercraft. Silent propulsion, neural-link navigation, and zero-g comfort in a sleek, obsidian chassis.</p>
+        <a href="#features" class="btn-magnetic hero-anim hover-target" style="border-color: #fff; color: #fff;">Explore AERIS</a>
+    </section>
+
+    <section class="features" id="features">
+        <div class="cards-container">
+            
+            <div class="tilt-card gs-reveal">
+                <div class="glare"></div>
+                <div class="card-icon"></div>
+                <h3 class="card-title">Silent Propulsion</h3>
+                <p class="card-desc">Our patented magnetic-levitation drives produce zero decibels. Glide through the city landscape without leaving an acoustic footprint.</p>
+            </div>
+
+            <div class="tilt-card gs-reveal">
+                <div class="glare"></div>
+                <div class="card-icon" style="background: linear-gradient(135deg, #ff0055, var(--accent-violet));"></div>
+                <h3 class="card-title">Neural Navigation</h3>
+                <p class="card-desc">Ditch the steering wheel. AERIS syncs directly with your cognitive intent via our non-invasive halo interface. Think it, and you move.</p>
+            </div>
+
+            <div class="tilt-card gs-reveal">
+                <div class="glare"></div>
+                <div class="card-icon" style="background: linear-gradient(135deg, #00ff88, var(--accent-cyan));"></div>
+                <h3 class="card-title">Zero-G Comfort</h3>
+                <p class="card-desc">The interior chassis counteracts kinetic force. Whether accelerating or taking sharp urban corners, you feel perfectly still.</p>
+            </div>
+
         </div>
-        <div class="data-panel">
-            TARGET DETECTED:<br>
-            <span class="target-name" id="target-name">SUN</span><br>
-            SYSTEM STATUS: <span>ACTIVE</span>
-        </div>
-    </div>
+    </section>
 
     <script>
-        // --- 1. CORE SETUP ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
-        camera.position.set(0, 150, 300); // Start ver uitgezoomd
+        // === 1. CUSTOM CURSOR LOGIC ===
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        document.body.appendChild(renderer.domElement);
-
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.maxDistance = 800;
-
-        const textureLoader = new THREE.TextureLoader();
-
-        // --- 2. ENVIRONMENT (STARS & LIGHT) ---
-        const ambientLight = new THREE.AmbientLight(0x333333);
-        scene.add(ambientLight);
-
-        // De zon geeft licht
-        const sunLight = new THREE.PointLight(0xffffff, 2, 1000);
-        scene.add(sunLight);
-
-        // Sterrenhemel
-        const starsGeo = new THREE.BufferGeometry();
-        const starsPos = new Float32Array(5000 * 3);
-        for(let i=0; i < 5000 * 3; i++) starsPos[i] = (Math.random() - 0.5) * 2000;
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({color: 0xffffff, size: 0.5, transparent: true, opacity: 0.8})));
-
-        // --- 3. THE PLANETS FACTORY ---
-        const planets = [];
-        const interactiveObjects = []; // Hier slaan we alles op waar je op kunt klikken
-
-        // Bouw de ZON
-        const sunGeo = new THREE.SphereGeometry(15, 64, 64);
-        const sunMat = new THREE.MeshBasicMaterial({ 
-            color: 0xffcc00, 
-            map: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/sun.jpg') // Fallback is color
-        });
-        const sun = new THREE.Mesh(sunGeo, sunMat);
-        sun.name = "SUN";
-        scene.add(sun);
-        interactiveObjects.push(sun);
-
-        // Functie om planeten te genereren
-        function createPlanet(name, size, distance, speed, textureUrl, color, hasRings = false) {
-            // Container voor de planeet (handig voor rotatie rond de zon)
-            const pivot = new THREE.Object3D();
-            scene.add(pivot);
-
-            // De planeet zelf
-            const geo = new THREE.SphereGeometry(size, 32, 32);
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: color,
-                map: textureUrl ? textureLoader.load(textureUrl) : null,
-                roughness: 0.6
-            });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.x = distance;
-            mesh.name = name;
-            pivot.add(mesh);
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
             
-            // Raycaster target
-            interactiveObjects.push(mesh);
-
-            // Orbit Lijn (zodat je de ringen rond de zon ziet)
-            const orbitGeo = new THREE.RingGeometry(distance - 0.2, distance + 0.2, 64);
-            const orbitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1, side: THREE.DoubleSide });
-            const orbit = new THREE.Mesh(orbitGeo, orbitMat);
-            orbit.rotation.x = Math.PI / 2; // Leg hem plat
-            scene.add(orbit);
-
-            // Ringen voor Saturnus
-            if (hasRings) {
-                const ringGeo = new THREE.RingGeometry(size * 1.4, size * 2.2, 64);
-                const ringMat = new THREE.MeshBasicMaterial({ color: 0xcda482, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
-                const ring = new THREE.Mesh(ringGeo, ringMat);
-                ring.rotation.x = Math.PI / 2 + 0.3; // Iets gekanteld
-                mesh.add(ring);
-            }
-
-            planets.push({ pivot, mesh, speed });
-            return mesh;
-        }
-
-        // Genereer het zonnestelsel (Schaal is aangepast voor zichtbaarheid!)
-        // Parameters: Naam, Grootte, Afstand tot zon, Rotatiesnelheid, Texture, Fallback Kleur
-        createPlanet("MERCURY", 2, 25, 0.02, null, 0x888888);
-        createPlanet("VENUS", 3, 40, 0.015, null, 0xe3bb76);
-        
-        // Aarde met high-res texture
-        createPlanet("EARTH", 3.5, 60, 0.01, 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/141228/earthmap1k.jpg', 0x2233ff);
-        
-        createPlanet("MARS", 2.5, 80, 0.008, null, 0xc1440e);
-        createPlanet("JUPITER", 8, 120, 0.002, null, 0xd39c7e);
-        createPlanet("SATURN", 6, 170, 0.0015, null, 0xe2bf7d, true); // Has rings!
-        createPlanet("URANUS", 4, 220, 0.001, null, 0x4b70dd);
-        createPlanet("NEPTUNE", 4, 260, 0.0008, null, 0x274687);
-
-        // --- 4. RAYCASTING (KLIKKEN OP PLANETEN) ---
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        let focusedObject = sun; // Start gefocust op de zon
-        const targetNameUI = document.getElementById('target-name');
-
-        window.addEventListener('click', (event) => {
-            // Bereken muispositie in -1 tot +1 (WebGL coördinaten)
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-
-            // Check of we planeten raken
-            const intersects = raycaster.intersectObjects(interactiveObjects);
-
-            if (intersects.length > 0) {
-                const clickedObj = intersects[0].object;
-                focusOnTarget(clickedObj);
-            }
+            // Dot volgt direct
+            gsap.to(cursorDot, { x: mouseX, y: mouseY, duration: 0 });
+            
+            // Dynamic Background Glow volgt muis
+            const bgGlow = document.getElementById('bg-glow');
+            const xPercent = (mouseX / window.innerWidth) * 100;
+            const yPercent = (mouseY / window.innerHeight) * 100;
+            bgGlow.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, rgba(138, 43, 226, 0.15), transparent 50%)`;
         });
 
-        // Functie om camera naar object te animeren
-        function focusOnTarget(target) {
-            focusedObject = target;
-            targetNameUI.innerText = target.name;
+        // Ring volgt met soepele vertraging (Lerp)
+        gsap.ticker.add(() => {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            gsap.set(cursorRing, { x: ringX, y: ringY });
+        });
 
-            // Bepaal hoever de camera moet inzoomen op basis van de grootte van de planeet
-            const objSize = target.geometry.parameters.radius || 15;
-            const offsetDist = objSize * 4; // Zoom afstand
-
-            // Pak de absolute wereld-coördinaten van de planeet (omdat ze in een draaiende pivot zitten)
-            const targetPos = new THREE.Vector3();
-            target.getWorldPosition(targetPos);
-
-            // GSAP Camera vlucht
-            gsap.to(camera.position, {
-                x: targetPos.x + offsetDist,
-                y: targetPos.y + offsetDist / 2,
-                z: targetPos.z + offsetDist,
-                duration: 1.5,
-                ease: "power3.inOut"
+        // Hover effecten voor links en knoppen
+        const hoverTargets = document.querySelectorAll('.hover-target');
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => {
+                gsap.to(cursorRing, { width: 60, height: 60, backgroundColor: 'rgba(0, 240, 255, 0.1)', duration: 0.2 });
             });
-        }
-
-        // Reset knop functionaliteit
-        window.resetView = function() {
-            focusedObject = sun;
-            targetNameUI.innerText = "OVERVIEW";
-            gsap.to(camera.position, { x: 0, y: 200, z: 350, duration: 2, ease: "power3.inOut" });
-            gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 2, ease: "power3.inOut" });
-        }
-
-        // --- 5. ANIMATIE LOOP ---
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Laat planeten draaien rond de zon
-            planets.forEach(p => {
-                p.pivot.rotation.y += p.speed; // Orbit
-                p.mesh.rotation.y += 0.01;     // Eigen as
+            target.addEventListener('mouseleave', () => {
+                gsap.to(cursorRing, { width: 40, height: 40, backgroundColor: 'transparent', duration: 0.2 });
             });
+        });
 
-            // Laat de zon zelf langzaam draaien
-            sun.rotation.y += 0.002;
+        // === 2. MAGNETIC BUTTON LOGIC ===
+        const magnetics = document.querySelectorAll('.btn-magnetic');
+        magnetics.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                gsap.to(btn, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+            });
+        });
 
-            // Als we gefocust zijn op een planeet, moet de camera "OrbitControls" het target blijven volgen
-            if (focusedObject) {
-                const targetPos = new THREE.Vector3();
-                focusedObject.getWorldPosition(targetPos);
+        // === 3. 3D TILT CARDS LOGIC ===
+        const cards = document.querySelectorAll('.tilt-card');
+        cards.forEach(card => {
+            const glare = card.querySelector('.glare');
+            
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 
-                // Soepele volgbeweging
-                controls.target.lerp(targetPos, 0.1);
-            }
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Bereken rotatie (-10 tot +10 graden)
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                
+                // Verplaats de "glare" (reflectie) mee met de muis
+                glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.1), transparent 60%)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
 
-            controls.update();
-            renderer.render(scene, camera);
-        }
+        // === 4. GSAP ANIMATIONS ===
+        gsap.registerPlugin(ScrollTrigger);
 
-        animate();
+        // Hero Intro Animatie
+        gsap.from(".hero-anim", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out",
+            delay: 0.2
+        });
 
-        // Responsive
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        // Scroll Animatie voor de Features
+        gsap.from(".gs-reveal", {
+            scrollTrigger: {
+                trigger: ".cards-container",
+                start: "top 80%", // Start als de bovenkant van de container 80% van het scherm raakt
+            },
+            y: 100,
+            opacity: 0,
+            rotationX: -15,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "back.out(1.7)"
         });
     </script>
 </body>
