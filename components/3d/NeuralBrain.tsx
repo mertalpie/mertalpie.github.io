@@ -1,13 +1,13 @@
 'use client';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
-import { inSphere } from 'maath/random/dist/maath-random.esm';
+import { inSphere } from 'maath/random';
 import type { Points as ThreePoints } from 'three';
 
 function BrainParticles() {
   const ref = useRef<ThreePoints>(null);
-  const sphere = inSphere(new Float32Array(5000), { radius: 1.5 });
+  const sphere = useMemo(() => inSphere(new Float32Array(5000), { radius: 1.5 }) as Float32Array, []);
 
   useFrame((state, delta) => {
     if (ref.current) {
