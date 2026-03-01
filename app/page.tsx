@@ -1,79 +1,91 @@
-import React from 'react';
+'use client';
+import { motion } from 'framer-motion';
+import { ReactLenis } from '@studio-freight/react-lenis';
+import dynamic from 'next/dynamic';
+import MagneticButton from '@/components/ui/MagneticButton';
+import GlassCard from '@/components/ui/GlassCard';
+import { Cpu, Network, Zap } from 'lucide-react';
 
-export default function Home() {
+const NeuralBrain = dynamic(() => import('@/components/3d/NeuralBrain'), { ssr: false });
+
+export default function NeuravoxHome() {
+  const springTransition = { duration: 1.2, ease: [0.16, 1, 0.3, 1] };
+
   return (
-    <div className="min-h-screen bg-[#050508] text-white font-sans overflow-x-hidden relative">
-      {/* Abstract 3D Glowing Fluid Background */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden bg-[#050508]">
-        {/* Blue Glow */}
-        <div 
-          className="absolute w-[600px] h-[600px] rounded-full blur-[140px] opacity-50 bg-gradient-to-br from-blue-600 to-cyan-400 top-[-10%] left-[-10%] animate-pulse" 
-          style={{ animationDuration: '10s' }} 
-        />
-        {/* Purple Glow */}
-        <div 
-          className="absolute w-[500px] h-[500px] rounded-full blur-[140px] opacity-50 bg-gradient-to-br from-purple-700 to-fuchsia-400 bottom-[-10%] right-[-5%] animate-pulse" 
-          style={{ animationDuration: '12s', animationDelay: '2s' }} 
-        />
-        {/* Emerald Glow */}
-        <div 
-          className="absolute w-[450px] h-[450px] rounded-full blur-[140px] opacity-40 bg-gradient-to-br from-cyan-500 to-emerald-400 top-[40%] left-[30%] animate-pulse" 
-          style={{ animationDuration: '15s', animationDelay: '5s' }} 
-        />
-      </div>
+    <ReactLenis root options={{ lerp: 0.05, smoothWheel: true }}>
+      <div className="min-h-screen bg-background text-white selection:bg-neon-purple selection:text-white overflow-hidden">
+        
+        {/* Glow Effects */}
+        <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-blue/20 blur-[120px] mix-blend-screen animate-glow-pulse pointer-events-none" />
+        <div className="fixed bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-purple/20 blur-[150px] mix-blend-screen animate-glow-pulse pointer-events-none" />
 
-      {/* Main Structured Content */}
-      <div className="max-w-7xl mx-auto px-8 py-32">
-        <header className="mb-24 text-left">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white to-[#8892b0] bg-clip-text text-transparent">
-            mertalp.me
-          </h1>
-          <p className="text-xl text-[#8892b0] max-w-2xl font-light leading-relaxed">
-            Premium tech aesthetics. Exploring the intersection of deep engineering and minimalist, high-fidelity user experiences.
-          </p>
-        </header>
+        {/* 3D WebGL Background */}
+        <NeuralBrain />
 
-        <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {/* Card 1 */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 flex flex-col justify-between min-h-[320px] transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-white tracking-tight">Scalable Systems</h2>
-              <p className="text-slate-400 text-lg font-light leading-relaxed">
-                Architecting backend infrastructure designed for high availability and premium performance.
-              </p>
-            </div>
-            <div className="mt-8 px-5 py-2 bg-white/5 rounded-full text-sm text-slate-200 border border-white/10 self-start uppercase tracking-wider">
-              Engineering
-            </div>
-          </div>
+        <main className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-32 pb-40">
+          
+          {/* 1. HERO SECTION */}
+          <section className="min-h-[90vh] flex flex-col items-center justify-center text-center mt-[-10vh]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              transition={springTransition}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8"
+            >
+              <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse" />
+              <span className="text-sm text-gray-300 font-medium tracking-wide">NEURAVOX OS 2.0 LIVE</span>
+            </motion.div>
 
-          {/* Card 2 */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 flex flex-col justify-between min-h-[320px] transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-white tracking-tight">Immersive UI/UX</h2>
-              <p className="text-slate-400 text-lg font-light leading-relaxed">
-                Crafting sleek, futuristic interfaces using glassmorphism, fluid animations, and generous negative space.
-              </p>
-            </div>
-            <div className="mt-8 px-5 py-2 bg-white/5 rounded-full text-sm text-slate-200 border border-white/10 self-start uppercase tracking-wider">
-              Design
-            </div>
-          </div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...springTransition, delay: 0.1 }}
+              className="text-7xl md:text-9xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent"
+            >
+              The Intelligence <br/> Layer for the Future.
+            </motion.h1>
 
-          {/* Card 3 */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 flex flex-col justify-between min-h-[320px] transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-white tracking-tight">Data Insights</h2>
-              <p className="text-slate-400 text-lg font-light leading-relaxed">
-                Transforming complex, high-volume datasets into clean, accessible, and structured insights.
-              </p>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...springTransition, delay: 0.2 }}
+              className="text-xl md:text-2xl text-gray-400 max-w-2xl font-light mb-12"
+            >
+              Powerful artificial intelligence platform providing autonomous reasoning agents and cognitive infrastructure for elite enterprises.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...springTransition, delay: 0.3 }}
+            >
+              <MagneticButton>Initialize Sequence</MagneticButton>
+            </motion.div>
+          </section>
+
+          {/* 2. FEATURES SECTION */}
+          <section className="py-32">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <GlassCard 
+                title="Autonomous Agents" 
+                desc="Self-correcting neural pathways that solve complex engineering tasks without human intervention."
+                icon={Cpu}
+              />
+              <GlassCard 
+                title="Cognitive Mesh" 
+                desc="Real-time distributed predictive systems adapting to your enterprise data streams instantly."
+                icon={Network}
+              />
+              <GlassCard 
+                title="Hyper-Execution" 
+                desc="Execute complex API and infrastructure orchestrations in milliseconds using LLM backbones."
+                icon={Zap}
+              />
             </div>
-            <div className="mt-8 px-5 py-2 bg-white/5 rounded-full text-sm text-slate-200 border border-white/10 self-start uppercase tracking-wider">
-              Analytics
-            </div>
-          </div>
+          </section>
+
         </main>
       </div>
-    </div>
+    </ReactLenis>
   );
 }
