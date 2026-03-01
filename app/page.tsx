@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import dynamic from 'next/dynamic';
@@ -20,7 +21,9 @@ export default function NeuravoxHome() {
         <div className="fixed bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-purple/20 blur-[150px] mix-blend-screen animate-glow-pulse pointer-events-none" />
 
         {/* 3D WebGL Background */}
-        <NeuralBrain />
+        <Suspense fallback={null}>
+          <NeuralBrain />
+        </Suspense>
 
         <main className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-32 pb-40">
           
