@@ -1,13 +1,9 @@
 import type { NavItem, PricingPlan, FAQ, UseCase, Feature, Testimonial } from './types';
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Product', href: '#product' },
-  { label: 'Features', href: '#features' },
-  { label: 'Use Cases', href: '#usecases' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Capabilities', href: '#capabilities' },
   { label: 'Demo', href: '#demo' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Data Panel', href: '#datapanel' },
 ];
 
 export const PRICING_PLANS: PricingPlan[] = [

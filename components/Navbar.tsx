@@ -59,7 +59,7 @@ export default function Navbar() {
           <button
             onClick={() => scrollToSection('home')}
             className="flex items-center gap-2 group focus:outline-none"
-            aria-label="PulseMind AI — Go to home"
+              aria-label="NEURAVOX — Go to home"
           >
             <svg
               width="32"
@@ -78,8 +78,8 @@ export default function Navbar() {
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="text-lg font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
-              PulseMind
+              <span className="text-lg font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
+                NEURAVOX
             </span>
           </button>
 
@@ -112,7 +112,7 @@ export default function Navbar() {
               onClick={() => handleNavClick('#demo')}
               className="px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900"
             >
-              Try Demo
+               Open Demo
             </button>
           </div>
 
@@ -197,7 +197,7 @@ export default function Navbar() {
                   onClick={() => handleNavClick('#demo')}
                   className="w-full px-4 py-2.5 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-200"
                 >
-                  Try Demo
+                   Open Demo
                 </button>
               </li>
             </ul>

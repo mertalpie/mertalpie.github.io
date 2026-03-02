@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #0f172a;
-  --background: #ffffff;
+  --foreground: #e2e8f0;
+  --background: #050505;
   --primary: #6366f1;
   --accent: #06b6d4;
   --muted: #64748b;
@@ -16,7 +16,7 @@
 
 .dark {
   --foreground: #f1f5f9;
-  --background: #020617;
+  --background: #050505;
   --primary: #6366f1;
   --accent: #06b6d4;
   --muted: #94a3b8;
@@ -34,6 +34,35 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.neural-grid {
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122, 0, 255, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.noise-layer {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 0.7px, transparent 0.7px);
+  background-size: 5px 5px;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 14s linear infinite;
+}
+
+.animate-neural-wave {
+  animation: neural-wave 1.4s ease-in-out infinite;
+}
+
+@keyframes neural-wave {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(300%); }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
 }
 
 /* Custom scrollbar */

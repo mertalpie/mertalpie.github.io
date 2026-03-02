@@ -4,31 +4,31 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'PulseMind AI — Turn meetings into momentum',
+  title: 'NEURAVOX — The Cognitive Interface',
   description:
-    'PulseMind AI automatically transcribes, summarizes, and extracts action items from your meetings — so your team can focus on what matters.',
-  keywords: ['AI meeting assistant', 'meeting summaries', 'action items', 'productivity', 'SaaS'],
+    'Where Human Thought Meets Synthetic Intelligence.',
+  keywords: ['NEURAVOX', 'AI interface', 'synthetic intelligence', 'futuristic AI', 'cognitive system'],
   openGraph: {
-    title: 'PulseMind AI — Turn meetings into momentum',
+    title: 'NEURAVOX — The Cognitive Interface',
     description:
-      'PulseMind AI automatically transcribes, summarizes, and extracts action items from your meetings — so your team can focus on what matters.',
+      'Where Human Thought Meets Synthetic Intelligence.',
     url: 'https://mertalp.me',
-    siteName: 'PulseMind AI',
+    siteName: 'NEURAVOX',
     type: 'website',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'PulseMind AI',
+        alt: 'NEURAVOX',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PulseMind AI — Turn meetings into momentum',
+    title: 'NEURAVOX — The Cognitive Interface',
     description:
-      'PulseMind AI automatically transcribes, summarizes, and extracts action items from your meetings.',
+      'Where Human Thought Meets Synthetic Intelligence.',
     images: ['/og-image.png'],
   },
   metadataBase: new URL('https://mertalp.me'),
