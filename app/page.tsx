@@ -6,6 +6,17 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 
 const WireSpherePanel = dynamic(() => import('@/components/3d/WireSpherePanel'), { ssr: false });
+const PARTICLE_COUNT = 70;
+const PARTICLE_BASE_VELOCITY = 0.35;
+const PARTICLE_REPULSION = 0.0025;
+const PARTICLE_CONNECTION_DISTANCE = 120;
+const PROCESSING_RADIUS = 160;
+const IDLE_RADIUS = 110;
+const PROCESSING_SPEED_FACTOR = 1.9;
+const IDLE_SPEED_FACTOR = 1;
+const TYPEWRITER_STEP = 2;
+const TYPEWRITER_DELAY_MS = 24;
+const FEED_INTERVAL_MS = 1500;
 const ENERGY_FORECAST_DATA = [44, 57, 72, 88, 96];
 const NETWORK_GRAPH_NODES: Array<[number, number]> = [
   [24, 28],
@@ -29,11 +40,11 @@ function NeuralParticleField({ boosted }: { boosted: boolean }) {
     if (!context) return;
 
     const pointer = { x: -1000, y: -1000 };
-    const particles = Array.from({ length: 70 }).map(() => ({
+    const particles = Array.from({ length: PARTICLE_COUNT }).map(() => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
+      vx: (Math.random() - 0.5) * PARTICLE_BASE_VELOCITY,
+      vy: (Math.random() - 0.5) * PARTICLE_BASE_VELOCITY,
     }));
 
     const onResize = () => {
@@ -52,8 +63,8 @@ function NeuralParticleField({ boosted }: { boosted: boolean }) {
     let raf = 0;
     const animate = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
-      const radius = boosted ? 160 : 110;
-      const speedFactor = boosted ? 1.9 : 1;
+      const radius = boosted ? PROCESSING_RADIUS : IDLE_RADIUS;
+      const speedFactor = boosted ? PROCESSING_SPEED_FACTOR : IDLE_SPEED_FACTOR;
 
       particles.forEach((particle, index) => {
         particle.x += particle.vx * speedFactor;
@@ -65,8 +76,8 @@ function NeuralParticleField({ boosted }: { boosted: boolean }) {
         const dy = pointer.y - particle.y;
         const dist = Math.hypot(dx, dy);
         if (dist < radius) {
-          particle.x -= dx * 0.0025;
-          particle.y -= dy * 0.0025;
+          particle.x -= dx * PARTICLE_REPULSION;
+          particle.y -= dy * PARTICLE_REPULSION;
         }
 
         context.fillStyle = '#00F0FF';
@@ -78,8 +89,10 @@ function NeuralParticleField({ boosted }: { boosted: boolean }) {
         for (let j = index + 1; j < particles.length; j += 1) {
           const other = particles[j];
           const lineDistance = Math.hypot(particle.x - other.x, particle.y - other.y);
-          if (lineDistance < 120) {
-            context.globalAlpha = ((120 - lineDistance) / 120) * (boosted ? 0.8 : 0.35);
+          if (lineDistance < PARTICLE_CONNECTION_DISTANCE) {
+            context.globalAlpha =
+              ((PARTICLE_CONNECTION_DISTANCE - lineDistance) / PARTICLE_CONNECTION_DISTANCE) *
+              (boosted ? 0.8 : 0.35);
             context.strokeStyle = '#7A00FF';
             context.beginPath();
             context.moveTo(particle.x, particle.y);
@@ -130,12 +143,15 @@ export default function NeuravoxHome() {
 
   useEffect(() => {
     if (!isProcessing || output.length >= fullResponse.length) return undefined;
-    const timer = setTimeout(() => setOutput(fullResponse.slice(0, output.length + 2)), 24);
+    const timer = setTimeout(
+      () => setOutput(fullResponse.slice(0, output.length + TYPEWRITER_STEP)),
+      TYPEWRITER_DELAY_MS,
+    );
     return () => clearTimeout(timer);
   }, [isProcessing, output, fullResponse]);
 
   useEffect(() => {
-    const timer = setInterval(() => setFeedTick((value) => value + 1), 1500);
+    const timer = setInterval(() => setFeedTick((value) => value + 1), FEED_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
 
