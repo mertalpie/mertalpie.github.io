@@ -6,6 +6,18 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 
 const WireSpherePanel = dynamic(() => import('@/components/3d/WireSpherePanel'), { ssr: false });
+const ENERGY_FORECAST_DATA = [44, 57, 72, 88, 96];
+const NETWORK_GRAPH_NODES: Array<[number, number]> = [
+  [24, 28],
+  [94, 44],
+  [148, 26],
+  [222, 54],
+  [282, 28],
+  [62, 132],
+  [142, 146],
+  [228, 122],
+  [292, 138],
+];
 
 function NeuralParticleField({ boosted }: { boosted: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -205,7 +217,7 @@ export default function NeuravoxHome() {
               <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
                 <p className="mb-4 text-xs uppercase tracking-[0.22em] text-slate-400">Energy Forecast 2035</p>
                 <div className="flex h-40 items-end gap-3">
-                  {[44, 57, 72, 88, 96].map((height, index) => (
+                  {ENERGY_FORECAST_DATA.map((height, index) => (
                     <motion.div
                       key={height}
                       initial={{ height: 0 }}
@@ -250,11 +262,21 @@ export default function NeuravoxHome() {
             <div className="rounded-2xl border border-white/10 bg-black/35 p-4">
               <p className="mb-4 text-xs uppercase tracking-[0.22em] text-slate-400">Animated Network Graph</p>
               <svg viewBox="0 0 320 180" className="h-48 w-full">
-                {[
-                  [24, 28], [94, 44], [148, 26], [222, 54], [282, 28], [62, 132], [142, 146], [228, 122], [292, 138],
-                ].map(([x, y], index, arr) => (
+                {NETWORK_GRAPH_NODES.map(([x, y], index, arr) => (
                   <g key={`${x}-${y}`}>
-                    {arr[index + 1] && <motion.line x1={x} y1={y} x2={arr[index + 1][0]} y2={arr[index + 1][1]} stroke="#7A00FF" strokeOpacity="0.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.7, delay: index * 0.06 }} />}
+                    {arr[index + 1] && (
+                      <motion.line
+                        x1={x}
+                        y1={y}
+                        x2={arr[index + 1][0]}
+                        y2={arr[index + 1][1]}
+                        stroke="#7A00FF"
+                        strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.7, delay: index * 0.06 }}
+                      />
+                    )}
                     <motion.circle cx={x} cy={y} r="4" fill="#00F0FF" animate={{ opacity: [0.45, 1, 0.45] }} transition={{ duration: 1.6, repeat: Infinity, delay: index * 0.08 }} />
                   </g>
                 ))}
