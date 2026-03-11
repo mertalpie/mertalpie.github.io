@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Rift: Eclipse Run</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="gameCanvas" aria-label="Neon Rift: Eclipse Run"></canvas>
+
+  <div id="hud" class="hud hidden">
+    <div class="hud-panel hud-left">
+      <div class="hud-label">Hull</div>
+      <div class="meter"><div id="healthFill" class="meter-fill"></div></div>
+      <div id="healthText" class="hud-value">100%</div>
+    </div>
+
+    <div class="hud-panel hud-center">
+      <div class="hud-title">NEON RIFT</div>
+      <div id="objectiveText" class="hud-subtitle">Survive the eclipse and harvest 12 shards.</div>
+    </div>
+
+    <div class="hud-panel hud-right">
+      <div class="hud-stat">
+        <span class="hud-label">Score</span>
+        <span id="scoreText" class="hud-value hud-value-small">0</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-label">Shards</span>
+        <span id="shardText" class="hud-value hud-value-small">0 / 12</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-label">Time</span>
+        <span id="timeText" class="hud-value hud-value-small">00:00</span>
+      </div>
+    </div>
+
+    <div class="hud-panel hud-bottom-left">
+      <div class="controls-title">Controls</div>
+      <div class="controls-grid">
+        <span>Move</span><span>WASD</span>
+        <span>Fire</span><span>Arrows</span>
+        <span>Dash</span><span>Space</span>
+      </div>
+    </div>
+
+    <div class="hud-panel hud-bottom-right">
+      <div id="hintText" class="hint-text">Destroy drones, collect shards, and endure the eclipse storm.</div>
+    </div>
+  </div>
+
+  <div id="startScreen" class="overlay visible">
+    <div class="panel hero-panel">
+      <div class="eyebrow">Self-Contained Canvas Game</div>
+      <h1>Neon Rift:<br />Eclipse Run</h1>
+      <p class="lead">
+        A premium neon survival run through a collapsing sci-fi arena. Cut through hunters,
+        weave through pulse hazards, harvest shards, and survive long enough to escape the
+        eclipse.
+      </p>
+
+      <div class="pill-row">
+        <span class="pill">Top-down combat</span>
+        <span class="pill">Reactive VFX</span>
+        <span class="pill">Increasing intensity</span>
+      </div>
+
+      <div class="instruction-box">
+        <div>Objective: collect 12 shards and survive for 90 seconds to stabilize the rift.</div>
+        <div>Movement uses WASD, arrow keys fire in 8 directions, and Space triggers a dash burst.</div>
+      </div>
+
+      <button id="startButton" class="primary-button">Start Run</button>
+      <div class="small-note">Works locally and on standard static hosting with no dependencies.</div>
+    </div>
+  </div>
+
+  <div id="endScreen" class="overlay">
+    <div class="panel end-panel">
+      <div id="endBadge" class="eyebrow">Run Complete</div>
+      <h2 id="endTitle">Rift Stabilized</h2>
+      <p id="endMessage" class="lead">You endured the eclipse and carved a path out.</p>
+      <div id="endStats" class="stats-line">Score: 0</div>
+      <button id="restartButton" class="primary-button">Restart</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
