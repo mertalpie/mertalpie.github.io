@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Idea Generator | mertalp.me</title>
+  <meta
+    name="description"
+    content="Generate random startup ideas instantly. A free business idea generator for founders, entrepreneurs and makers."
+  />
+  <meta property="og:title" content="Business Idea Generator | mertalp.me" />
+  <meta
+    property="og:description"
+    content="Generate random startup ideas instantly. A free business idea generator for founders, entrepreneurs and makers."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mertalp.me/" />
+  <meta property="og:site_name" content="mertalp.me" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Business Idea Generator | mertalp.me" />
+  <meta
+    name="twitter:description"
+    content="Generate random startup ideas instantly. A free business idea generator for founders, entrepreneurs and makers."
+  />
+  <link rel="canonical" href="https://mertalp.me/" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="background-orb orb-one" aria-hidden="true"></div>
+  <div class="background-orb orb-two" aria-hidden="true"></div>
+  <div class="background-orb orb-three" aria-hidden="true"></div>
+
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">mertalp.me</p>
+        <h1>Business Idea Generator</h1>
+        <p class="subtitle">Instant startup ideas for entrepreneurs and makers</p>
+        <p class="hero-description">
+          Generate polished startup concepts in one click, explore the business angles behind
+          them, and find new product directions for your next build.
+        </p>
+
+        <div class="hero-points">
+          <span class="hero-pill">
+            <span class="icon" aria-hidden="true">✦</span>
+            Fast concept generation
+          </span>
+          <span class="hero-pill">
+            <span class="icon" aria-hidden="true">◌</span>
+            Product breakdown included
+          </span>
+          <span class="hero-pill">
+            <span class="icon" aria-hidden="true">↗</span>
+            Built for founders and makers
+          </span>
+        </div>
+      </div>
+
+      <aside class="hero-preview" aria-label="Tool preview">
+        <div class="preview-window">
+          <div class="preview-topbar">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="preview-card">
+            <div class="preview-label">Example output</div>
+            <div class="preview-idea">AI tools for logistics teams</div>
+            <div class="preview-grid">
+              <div>
+                <span>Monetization</span>
+                <strong>Subscription</strong>
+              </div>
+              <div>
+                <span>Complexity</span>
+                <strong>Medium</strong>
+              </div>
+              <div>
+                <span>Audience</span>
+                <strong>B2B niche</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </header>
+
+    <main class="generator" aria-labelledby="idea-heading">
+      <section class="idea-card" aria-live="polite">
+        <div class="card-glow" aria-hidden="true"></div>
+        <div class="card-header">
+          <span class="card-badge">
+            <span class="icon" aria-hidden="true">✦</span>
+            Fresh idea
+          </span>
+          <span class="card-shortcut">
+            <span class="icon" aria-hidden="true">⌨</span>
+            Press <kbd>Space</kbd> to generate
+          </span>
+        </div>
+
+        <div class="chip-row" aria-label="Idea categories">
+          <span class="category-chip">
+            <span class="chip-icon" aria-hidden="true">⚙</span>
+            <span class="chip-label">Technology</span>
+            <strong id="technologyChip">AI</strong>
+          </span>
+          <span class="category-chip">
+            <span class="chip-icon" aria-hidden="true">◔</span>
+            <span class="chip-label">Customer</span>
+            <strong id="customerChip">dentists</strong>
+          </span>
+          <span class="category-chip">
+            <span class="chip-icon" aria-hidden="true">→</span>
+            <span class="chip-label">Problem</span>
+            <strong id="problemChip">schedule appointments</strong>
+          </span>
+          <span class="category-chip">
+            <span class="chip-icon" aria-hidden="true">▣</span>
+            <span class="chip-label">Industry</span>
+            <strong id="industryChip">healthcare</strong>
+          </span>
+        </div>
+
+        <h2 id="idea-heading" class="visually-hidden">Generated business idea</h2>
+        <p id="ideaText" class="idea-text">
+          An AI platform that helps dentists manage patient appointments automatically.
+        </p>
+
+        <section class="idea-breakdown" aria-labelledby="breakdownHeading">
+          <div class="section-heading">
+            <span class="section-icon" aria-hidden="true">◈</span>
+            <h3 id="breakdownHeading">Idea breakdown</h3>
+          </div>
+          <div class="breakdown-grid">
+            <article class="breakdown-item">
+              <span class="breakdown-label">Product angle</span>
+              <p id="productAngleText">A focused tool with a clear operational use case.</p>
+            </article>
+            <article class="breakdown-item">
+              <span class="breakdown-label">Why now</span>
+              <p id="whyNowText">Customers want faster, simpler software that saves manual work.</p>
+            </article>
+            <article class="breakdown-item">
+              <span class="breakdown-label">Go-to-market</span>
+              <p id="goToMarketText">Start with a niche audience and sell on direct ROI.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="potential-panel" aria-labelledby="potentialHeading">
+          <div class="section-heading">
+            <span class="section-icon" aria-hidden="true">▲</span>
+            <h3 id="potentialHeading">Business potential</h3>
+          </div>
+          <div class="potential-grid">
+            <article class="potential-item">
+              <span class="potential-label">Monetization</span>
+              <strong id="monetizationText">Subscription</strong>
+            </article>
+            <article class="potential-item">
+              <span class="potential-label">Complexity</span>
+              <strong id="complexityText">Medium</strong>
+            </article>
+            <article class="potential-item">
+              <span class="potential-label">Audience</span>
+              <strong id="audienceText">Professional niche</strong>
+            </article>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button id="generateButton" class="button button-primary" type="button">
+            <span class="button-icon" aria-hidden="true">↻</span>
+            Generate new idea
+          </button>
+          <button id="copyButton" class="button button-secondary" type="button">
+            <span class="button-icon" aria-hidden="true">⧉</span>
+            Copy idea
+          </button>
+          <a
+            id="shareButton"
+            class="button button-secondary"
+            href="https://twitter.com/intent/tweet"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="button-icon" aria-hidden="true">↗</span>
+            Share on Twitter/X
+          </a>
+        </div>
+
+        <p class="combination-note">1000+ possible combinations</p>
+        <p id="statusText" class="status-text" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <section class="how-it-works" aria-labelledby="howItWorksHeading">
+      <div class="section-heading landing-heading">
+        <span class="section-icon" aria-hidden="true">◎</span>
+        <h2 id="howItWorksHeading">How it works</h2>
+      </div>
+      <p class="section-copy">
+        The generator combines a technology, customer, problem, and industry into a startup
+        concept, then adds a quick lens on business potential so the idea feels closer to a real
+        product direction.
+      </p>
+
+      <div class="how-grid">
+        <article class="info-card">
+          <div class="info-icon" aria-hidden="true">1</div>
+          <h3>Generate</h3>
+          <p>Create a fresh startup concept instantly with a single click or the space bar.</p>
+        </article>
+        <article class="info-card">
+          <div class="info-icon" aria-hidden="true">2</div>
+          <h3>Evaluate</h3>
+          <p>Read the category chips and business panel to understand the angle, effort, and fit.</p>
+        </article>
+        <article class="info-card">
+          <div class="info-icon" aria-hidden="true">3</div>
+          <h3>Share</h3>
+          <p>Copy the idea or post it to Twitter/X when you find one worth exploring further.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Built on mertalp.me</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
