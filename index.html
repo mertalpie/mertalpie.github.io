@@ -23,6 +23,14 @@
     content="Generate random startup ideas instantly. A free business idea generator for founders, entrepreneurs and makers."
   />
   <link rel="canonical" href="https://mertalp.me/" />
+  <script>
+    try {
+      var savedTheme = localStorage.getItem("mertalp_theme");
+      if (savedTheme) {
+        document.documentElement.dataset.theme = savedTheme;
+      }
+    } catch (error) {}
+  </script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -33,12 +41,19 @@
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">mertalp.me</p>
+        <div class="hero-topbar">
+          <p class="eyebrow">mertalp.me</p>
+          <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <span class="button-icon" aria-hidden="true">◐</span>
+            <span id="themeToggleText">Dark mode</span>
+          </button>
+        </div>
+
         <h1>Business Idea Generator</h1>
         <p class="subtitle">Instant startup ideas for entrepreneurs and makers</p>
         <p class="hero-description">
           Generate polished startup concepts in one click, explore the business angles behind
-          them, and find new product directions for your next build.
+          them, and turn raw inspiration into something that feels closer to a real product.
         </p>
 
         <div class="hero-points">
@@ -48,7 +63,7 @@
           </span>
           <span class="hero-pill">
             <span class="icon" aria-hidden="true">◌</span>
-            Product breakdown included
+            Filters, favorites, and trending
           </span>
           <span class="hero-pill">
             <span class="icon" aria-hidden="true">↗</span>
@@ -65,20 +80,20 @@
             <span></span>
           </div>
           <div class="preview-card">
-            <div class="preview-label">Example output</div>
-            <div class="preview-idea">AI tools for logistics teams</div>
+            <div class="preview-label">Live product view</div>
+            <div class="preview-idea">AI platform for logistics teams</div>
             <div class="preview-grid">
+              <div>
+                <span>Potential</span>
+                <strong>8.4 / 10</strong>
+              </div>
               <div>
                 <span>Monetization</span>
                 <strong>Subscription</strong>
               </div>
               <div>
-                <span>Complexity</span>
-                <strong>Medium</strong>
-              </div>
-              <div>
                 <span>Audience</span>
-                <strong>B2B niche</strong>
+                <strong>Focused B2B</strong>
               </div>
             </div>
           </div>
@@ -86,9 +101,25 @@
       </aside>
     </header>
 
+    <section class="social-proof" aria-label="Social proof">
+      <article class="proof-card">
+        <strong id="generatedCount">0</strong>
+        <span>ideas generated</span>
+      </article>
+      <article class="proof-card">
+        <strong>Founders, indie hackers, makers</strong>
+        <span>Built for people exploring product opportunities</span>
+      </article>
+      <article class="proof-card">
+        <strong>1000+ combinations</strong>
+        <span>Technology, customer, problem, and industry mixes</span>
+      </article>
+    </section>
+
     <main class="generator" aria-labelledby="idea-heading">
-      <section class="idea-card" aria-live="polite">
+      <section id="mainIdeaCard" class="idea-card" aria-live="polite">
         <div class="card-glow" aria-hidden="true"></div>
+
         <div class="card-header">
           <span class="card-badge">
             <span class="icon" aria-hidden="true">✦</span>
@@ -98,6 +129,31 @@
             <span class="icon" aria-hidden="true">⌨</span>
             Press <kbd>Space</kbd> to generate
           </span>
+        </div>
+
+        <div class="filter-bar" aria-label="Idea filters">
+          <label class="filter-control">
+            <span>Technology</span>
+            <select id="technologyFilter">
+              <option value="">All technologies</option>
+            </select>
+          </label>
+          <label class="filter-control">
+            <span>Industry</span>
+            <select id="industryFilter">
+              <option value="">All industries</option>
+            </select>
+          </label>
+          <label class="filter-control">
+            <span>Customer type</span>
+            <select id="customerFilter">
+              <option value="">All customers</option>
+            </select>
+          </label>
+          <button id="resetFiltersButton" class="button button-ghost filter-reset" type="button">
+            <span class="button-icon" aria-hidden="true">⟲</span>
+            Reset filters
+          </button>
         </div>
 
         <div class="card-tabs" role="tablist" aria-label="Idea panels">
@@ -121,7 +177,29 @@
             aria-controls="historyPanel"
           >
             <span class="button-icon" aria-hidden="true">☰</span>
-            Idea history
+            History
+          </button>
+          <button
+            id="favoritesTab"
+            class="tab-button"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="favoritesPanel"
+          >
+            <span class="button-icon" aria-hidden="true">★</span>
+            Favorites
+          </button>
+          <button
+            id="trendingTab"
+            class="tab-button"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="trendingPanel"
+          >
+            <span class="button-icon" aria-hidden="true">↗</span>
+            Trending
           </button>
         </div>
 
@@ -161,7 +239,7 @@
             </div>
             <div class="breakdown-grid">
               <article class="breakdown-item">
-                <span class="breakdown-label">Product angle</span>
+                <span class="breakdown-label">Product concept</span>
                 <p id="productAngleText">A focused tool with a clear operational use case.</p>
               </article>
               <article class="breakdown-item">
@@ -193,6 +271,16 @@
                 <span class="potential-label">Audience</span>
                 <strong id="audienceText">Professional niche</strong>
               </article>
+              <article class="potential-item potential-score-card">
+                <span class="potential-label">Idea potential</span>
+                <div class="score-row">
+                  <strong id="potentialScoreText">8.0 / 10</strong>
+                  <span id="potentialScoreBadge" class="score-badge">Strong</span>
+                </div>
+                <div class="score-bar">
+                  <div id="potentialScoreFill" class="score-bar-fill"></div>
+                </div>
+              </article>
             </div>
           </section>
 
@@ -200,6 +288,14 @@
             <button id="generateButton" class="button button-primary" type="button">
               <span class="button-icon" aria-hidden="true">↻</span>
               Generate new idea
+            </button>
+            <button id="generateFiveButton" class="button button-secondary" type="button">
+              <span class="button-icon" aria-hidden="true">☷</span>
+              Generate 5 ideas
+            </button>
+            <button id="saveButton" class="button button-secondary" type="button">
+              <span class="button-icon" aria-hidden="true">★</span>
+              Save idea
             </button>
             <button id="copyButton" class="button button-secondary" type="button">
               <span class="button-icon" aria-hidden="true">⧉</span>
@@ -215,7 +311,23 @@
               <span class="button-icon" aria-hidden="true">↗</span>
               Share on Twitter/X
             </a>
+            <button id="shareCardButton" class="button button-secondary" type="button">
+              <span class="button-icon" aria-hidden="true">▣</span>
+              Share card
+            </button>
+            <button id="refineButton" class="button button-secondary" type="button">
+              <span class="button-icon" aria-hidden="true">✎</span>
+              Refine idea
+            </button>
           </div>
+
+          <section id="stackSection" class="stack-section" hidden aria-labelledby="stackHeading">
+            <div class="section-heading">
+              <span class="section-icon" aria-hidden="true">☷</span>
+              <h3 id="stackHeading">Idea stack</h3>
+            </div>
+            <div id="stackList" class="stack-list"></div>
+          </section>
         </section>
 
         <section id="historyPanel" class="tab-panel" role="tabpanel" aria-labelledby="historyTab" hidden>
@@ -229,11 +341,36 @@
               Clear history
             </button>
           </div>
-
           <div id="historyEmptyState" class="history-empty">
             No idea history yet. Generate a few ideas and they’ll appear here.
           </div>
           <div id="historyList" class="history-list" aria-live="polite"></div>
+        </section>
+
+        <section id="favoritesPanel" class="tab-panel" role="tabpanel" aria-labelledby="favoritesTab" hidden>
+          <div class="history-header">
+            <div>
+              <h3 class="history-title">Favorite ideas</h3>
+              <p class="history-copy">Keep the ideas worth revisiting in one clean place.</p>
+            </div>
+          </div>
+          <div id="favoritesEmptyState" class="history-empty">
+            No favorites yet. Save an idea with the star button to collect it here.
+          </div>
+          <div id="favoritesList" class="history-list" aria-live="polite"></div>
+        </section>
+
+        <section id="trendingPanel" class="tab-panel" role="tabpanel" aria-labelledby="trendingTab" hidden>
+          <div class="history-header">
+            <div>
+              <h3 class="history-title">Trending ideas</h3>
+              <p class="history-copy">Ranked by copy, share, and favorite activity in this browser.</p>
+            </div>
+          </div>
+          <div id="trendingEmptyState" class="history-empty">
+            No trending data yet. Interact with a few ideas and they’ll start ranking here.
+          </div>
+          <div id="trendingList" class="history-list" aria-live="polite"></div>
         </section>
 
         <p class="combination-note">1000+ possible combinations</p>
@@ -248,25 +385,25 @@
       </div>
       <p class="section-copy">
         The generator combines a technology, customer, problem, and industry into a startup
-        concept, then adds a quick lens on business potential so the idea feels closer to a real
-        product direction.
+        concept, then layers on potential scoring, quick refinement, and lightweight product
+        evaluation so each idea feels more actionable.
       </p>
 
       <div class="how-grid">
         <article class="info-card">
           <div class="info-icon" aria-hidden="true">1</div>
           <h3>Generate</h3>
-          <p>Create a fresh startup concept instantly with a single click or the space bar.</p>
+          <p>Create one idea or a stack of five based on your selected filters.</p>
         </article>
         <article class="info-card">
           <div class="info-icon" aria-hidden="true">2</div>
           <h3>Evaluate</h3>
-          <p>Read the category chips and business panel to understand the angle, effort, and fit.</p>
+          <p>Review chips, potential score, monetization, and a deterministic concept expansion.</p>
         </article>
         <article class="info-card">
           <div class="info-icon" aria-hidden="true">3</div>
-          <h3>Share</h3>
-          <p>Copy the idea or post it to Twitter/X when you find one worth exploring further.</p>
+          <h3>Save and share</h3>
+          <p>Favorite strong ideas, download share cards, and see what trends over time.</p>
         </article>
       </div>
     </section>
@@ -274,6 +411,19 @@
     <footer class="footer">
       <p>Built on mertalp.me</p>
     </footer>
+  </div>
+
+  <div id="modalOverlay" class="modal-overlay" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <p id="modalEyebrow" class="modal-eyebrow">Idea detail</p>
+          <h2 id="modalTitle" class="modal-title">Refine idea</h2>
+        </div>
+        <button id="closeModalButton" class="modal-close" type="button" aria-label="Close modal">×</button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
